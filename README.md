@@ -48,7 +48,7 @@
 
 ## About writer
   Author : 20181603, Minseon Kim  <br>
-  Date   : 2021-05-30  <br>
+  Date   : 2021-05-13 ~ 2021-05-30  <br>
 
  <br>
 ##### Sogang Univ. System Programming - My Shell project
