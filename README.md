@@ -35,10 +35,10 @@
 
 #### 5. Check if pipe 
 ##### (1) If pipe, parse command (delimiter is '|') <br>
-         - Child process  : execute each command which is separated by '|'  <br>
-		           output of one pipe should be the input of the next pipe <br> 
-			   (using recursive function 'make_pipe')  <br>
-         - Parent process : wait for the child process  <br>
+	- Child process  : execute each command which is separated by '|'  <br>
+		   output of one pipe should be the input of the next pipe <br> 
+		   (using recursive function 'make_pipe')  <br>
+	- Parent process : wait for the child process  <br>
 ##### (2) If not pipe, same as #4.  <br>
 
 #### 6. Check if background 
