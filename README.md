@@ -16,8 +16,8 @@
 #### 3. Parse command (delimiter is ' ')  
 #### 4. Check if built-in command
 ##### (1) If not built-in command, fork
- - Child process  : execute the command <br>
- - Parent process : wait for the child process <br>
+	 - Child process  : execute the command <br>
+	 - Parent process : wait for the child process <br>
 ##### (2) If built-in command, just execute the command
 	- cd   : navigate the directories <br>
 	- exit : terminate the shell <br>
@@ -25,6 +25,7 @@
 	- bg [job]   : change a stopped background job to a running background job <br>
 	- fg [job]   : change a stopped or running background job to a running foreground job <br>
 	- kill [job] : terminate a job <br>
+	
 	+) Description about [job] <br>
 	: This description is applied to 'bg [job]', 'fg [job]', and 'kill [job]' commands.<br>
 	  [job] should be '%[number]' or '[number]'. <br>
