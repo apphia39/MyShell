@@ -1,14 +1,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *																 *
- * Sogang University											 *
- * Computer Science and Engineering								 *
- * System Programming											 *
- *																 *
- * Project name : MyShell phase3								 *
- * FIle name    : myshell.c     								 *
- * Author       : 20181603 kim minseon							 *
- * Date         : 2021 - 05 - 30								 *
- *																 *
+ *								 *
+ * Sogang University						 *
+ * Computer Science and Engineering				 *
+ * System Programming						 *
+ *								 *
+ * Project name : MyShell					 *
+ * FIle name    : myshell.c     				 *
+ * Author       : 20181603 kim minseon				 *
+ * Date         : 2021 - 05 - 30				 *
+ *								 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "myshell.h"
@@ -169,8 +169,10 @@ int updateJob(int pid, int bg){
 			/* Update fg */
 			fg_pid = pid;
 			strcpy(fg_cmd, bg_job[idx].cmd);
-			waitpid(pid, NULL, WUNTRACED);
-		
+			if(waitpid(pid, NULL, WUNTRACED) < 0){
+				fprintf(stderr, "*** Wait error ***\n");
+				_exit(0);
+			}
 			return 0;
 		}
 	}
@@ -210,15 +212,10 @@ int CMD_fgbgkill(char **argv, int bg){
 
 /* check if there is completed process in bg_job */
 void check_jobs(){
-	char filePath[MAXFILE];		/* filePath */
-	char line[MAXFILE];			/* Read line from filePath */
-	int status;					/* Process Status */
-	char cmd[100];				/* Process cmdline */
-	pid_t pid;					/* Process ID */
-	char c;	
-	FILE* fp;
+	int status;		/* Process Status */
+	pid_t pid;		/* Process ID */
 
-	if(bg_jobNum == 0) /* bg_job is empty */
+	if(bg_jobNum == 0) 	/* bg_job is empty */
 		return;
 
 	/* Find terminated JOB */
@@ -232,7 +229,6 @@ void check_jobs(){
 		bg_job[idx].status = status;
 
 		if(status == 0 || status == 1 || status == 2){
-			bg_job[idx].status = status;
 			continue;
 		}
 		else{
@@ -283,16 +279,16 @@ int main(){
 
 void eval(char *cmdline){
 	char *argv[MAXARGS];	/* Argument list execvp() */
-	char buf[MAXLINE];		/* Holds modified command line */
-	int bg;					/* Should the job run in bg or fg? */
-	pid_t pid;				/* Process id */
-	int child_status;		/* Child status */
-	int pipe = 0;			/* Pipe or Nonpipe? */
+	char buf[MAXLINE];	/* Holds modified command line */
+	int bg;			/* Should the job run in bg or fg? */
+	pid_t pid;		/* Process id */
+	int child_status;	/* Child status */
+	int pipe = 0;		/* Pipe or Nonpipe? */
 	char tmpBUF[MAXLINE];
 	char tmpCMD[MAXLINE];
 	
 	strcpy(buf, cmdline);
-	bg = parseline(buf, argv);		/* [1: background job] [0: foreground job] */
+	bg = parseline(buf, argv);	/* [1: background job] [0: foreground job] */
 	if(argv[0] == NULL) return ;	/* Ignore empty lines */
 
 	/* Check if command includes pipe */
@@ -305,11 +301,11 @@ void eval(char *cmdline){
 	if(!builtin_command(argv)){
 		pid = fork();
 	
-		if(pid < 0){/* fork error */
+		if(pid < 0){ /* fork error */
 			fprintf(stderr, "*** Fork error ***\n");
 			_exit(0);
 		}
-		else if(pid == 0){/* child process */
+		else if(pid == 0){ /* child process */
 			if(bg)
 				sigprocmask(SIG_BLOCK, &mask, NULL);
 			else
@@ -320,14 +316,14 @@ void eval(char *cmdline){
 				makepipe(argv, tmpCMD);
 				_exit(0);
 			}
-			else{/* No Pipe */
+			else{ /* No Pipe */
 				if(execvp(argv[0], argv) < 0){
 					fprintf(stderr, "%s: Command not found.\n", argv[0]);
 					_exit(0);
 				}
 			}
 		}
-		else{/* parent process */
+		else{ /* parent process */
 			if(bg){
 				sigprocmask(SIG_BLOCK, &mask, NULL);
 				addJob(pid, cmdline);
@@ -357,7 +353,7 @@ void eval(char *cmdline){
 /* If first arg is a builtin command, run it and return true */
 int builtin_command(char **argv){
 
-	if(strcmp(argv[0], "cd") == 0){		/* cd command */
+	if(strcmp(argv[0], "cd") == 0){	/* cd command */
 		if(argv[1]){
 			if(chdir(argv[1]) < 0){
 				fprintf(stderr, "-bash: %s: %s: No such file or directory\n", argv[0], argv[1]);
@@ -369,29 +365,29 @@ int builtin_command(char **argv){
 		return 1;
 	}
 
-	if(strcmp(argv[0], "exit") == 0)	/* exit command */
+	if(strcmp(argv[0], "exit") == 0) /* exit command */
 		exit(0);
 
-	if(strcmp(argv[0], "jobs") == 0){	/* List the running and stopped background jobs */
+	if(strcmp(argv[0], "jobs") == 0){ /* List the running and stopped background jobs */
 		listJobs();
 		return 1;
 	}
 
-	if(strcmp(argv[0], "bg") == 0){		/* Change a stopped background job to a running background job */
+	if(strcmp(argv[0], "bg") == 0){	/* Change a stopped background job to a running background job */
 		if(CMD_fgbgkill(argv, 1) < 0){
 			fprintf(stderr, "*** Failed command: bg ***\n");
 		}
 		return 1;
 	}
 
-	if(strcmp(argv[0], "fg") == 0){		/* Change a stopped or running background job to a running in the foreground */
+	if(strcmp(argv[0], "fg") == 0){	/* Change a stopped or running background job to a running in the foreground */
 		if(CMD_fgbgkill(argv, 0) < 0){
 			fprintf(stderr, "*** Failed command: fg ***\n");
 		}
 		return 1;
 	}
 
-	if(strcmp(argv[0], "kill") == 0){	/* Terminate a job */
+	if(strcmp(argv[0], "kill") == 0){ /* Terminate a job */
 		if(CMD_fgbgkill(argv, -1) < 0){
 			fprintf(stderr, "*** Failed command: kill ***\n");
 		}
@@ -404,17 +400,17 @@ int builtin_command(char **argv){
 	if(strcmp(argv[0], "&") == 0)
 		return 1;
 
-	return 0;	/* Not a built-in command */
+	return 0; /* Not a built-in command */
 }
 
 /* parse the command line and built the argv array */
 int parseline(char *buf, char **argv){
 	char *delim;	/* Points to first space delimiter */
-	int argc;		/* Number of args */
-	int bg;			/* Background job? */
+	int argc;	/* Number of args */
+	int bg;		/* Background job? */
 
-	buf[strlen(buf)-1] = ' ';  /* Replace '\n' with space */
-	while(*buf && (*buf == ' ')) /* Ignore leading spaces */
+	buf[strlen(buf)-1] = ' ';  	/* Replace '\n' with space */
+	while(*buf && (*buf == ' ')) 	/* Ignore leading spaces */
 		buf++;
 
 	/* Build the argv list */
