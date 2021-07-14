@@ -34,22 +34,21 @@
 			Others are error
 
   5. Check if pipe
-     (1) If pipe, parse command (delimiter is '|')
-	     - Chile process  : execute each command which is separated by '|'
-		                    output of one pipe should be the input of the next pipe 
-							(using recursive function 'make_pipe')
-		 - Parent process : wait for the child process
-	 (2) If not pipe, same as #4.
-
- +6. Check if background
-     (1) If background, parent process does not wait for the child process
-	 (2) If foreground, parent process waits for the child process
+     (1) If pipe, parse command (delimiter is '|') <Br>
+	 > Child process  : execute each command which is separated by '|' <Br>
+		            output of one pipe should be the input of the next pipe <Br> 
+			   (using recursive function 'make_pipe') <Br>
+	 > Parent process : wait for the child process <Br>
+	 (2) If not pipe, same as #4. <Br>
+ <Br>
+ 6. Check if background <Br>
+     (1) If background, parent process does not wait for the child process <Br>
+     (2) If foreground, parent process waits for the child process <Br>
 
 
 ## About writer
-  Author : 20181603, Minseon Kim
-  Date   : 2021-05-30
+  Author : 20181603, Minseon Kim <Br>
+  Date   : 2021-05-30 <Br>
 
-
-<br><br><br>
+<Br>
 ##### Sogang Univ. System Programming - My Shell project
