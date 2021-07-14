@@ -1,8 +1,8 @@
 # MyShell
 
 ## Project Name
-  MyShell - phase3 (background processing and new built-in commands are added)
-
+  MyShell
+  
 ## How to compile
   $ make
 
