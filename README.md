@@ -1,4 +1,4 @@
-# MyShell
+# MyShell [language: C]
 
 ## Project Name
   MyShell
